@@ -103,5 +103,27 @@ minimum these two fields: `salary` and `effectiveDate`. Each `Compensation` shou
 Create two new REST endpoints to create and read `Compensation` information from the database. These endpoints should 
 persist and fetch `Compensation` data for a specific `Employee` using the persistence layer.
 
+### Implemented endpoints
+
+* `GET /employee/{id}/reporting-structure` returns `employee` and `numberOfReports`.
+  Counts are computed from current employee records, counting distinct reachable IDs,
+  excluding the requested employee even if a cycle exists. The employee retains the
+  existing direct-report reference representation. Broken references return HTTP 409;
+  an unknown employee returns HTTP 404. No reporting structure is persisted.
+* `POST /employee/{id}/compensation` creates one compensation record for an existing
+  employee and returns HTTP 201. Example body:
+  `{"salary": 100000.00, "effectiveDate": "2026-11-03"}`.
+* `GET /employee/{id}/compensation` reads the stored compensation record, including
+  its `employeeId`. Unknown employees or missing compensation return HTTP 404.
+
+Salary uses `BigDecimal` and must be nonnegative; effectiveDate is a required ISO
+date (`yyyy-MM-dd`). Invalid input returns HTTP 400. The URL establishes the employee
+association; a conflicting employeeId in the body is rejected. This initial version
+supports one compensation record per employee (no salary history); duplicate creates
+return HTTP 409 rather than replacing data. Records use the provided in-memory MongoDB
+and are lost when the application stops.
+
+Run the tests with `gradlew test` (`.\gradlew.bat test` on Windows).
+
 ## Delivery
 Please upload your results to a publicly accessible Git repo. Free ones are provided by GitHub and Bitbucket.
