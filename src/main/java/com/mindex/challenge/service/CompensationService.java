@@ -20,10 +20,8 @@ public class CompensationService {
 
     public Compensation create(String employeeId, Compensation compensation) {
         requireEmployee(employeeId);
-        if (compensation.getSalary() == null || compensation.getSalary().signum() < 0
-                || compensation.getEffectiveDate() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "A nonnegative salary and effectiveDate are required");
+        if (compensation.getSalary() == null || compensation.getSalary().signum() < 0 || compensation.getEffectiveDate() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A nonnegative salary and effectiveDate are required");
         }
         if (compensation.getEmployeeId() != null && !employeeId.equals(compensation.getEmployeeId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "employeeId must match the URL");
@@ -38,8 +36,7 @@ public class CompensationService {
 
     public Compensation read(String employeeId) {
         requireEmployee(employeeId);
-        return compensations.findById(employeeId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Compensation not found"));
+        return compensations.findById(employeeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Compensation not found"));
     }
 
     private void requireEmployee(String employeeId) {
